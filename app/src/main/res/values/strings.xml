@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">AutoGenerateCertificates</string>
+    <string name="certigen">CertiGen</string>
 </resources>
