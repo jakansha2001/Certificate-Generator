@@ -11,6 +11,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -31,10 +32,18 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 checkPermission();
+                browse.setText("GO TO TEMPLATES");
+                browse.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent i1=new Intent(getApplicationContext(), TemplateActivity.class);
+                        i1.putExtra("file path",path_xlsx);
+                        Log.i("path",path_xlsx);
+                        startActivity(i1);
+                    }
+                });
             }
         });
-
-
     }
     private void checkPermission() {
         if(Build.VERSION.SDK_INT>=23){
@@ -68,10 +77,12 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case 1:
                 if (resultCode == RESULT_OK) {
                     path_xlsx = data.getData().getPath();
+                    path_xlsx = path_xlsx.replace("/document/raw:/", "");
                     Toast.makeText(this, path_xlsx, Toast.LENGTH_LONG).show();
                 }
                 break;
