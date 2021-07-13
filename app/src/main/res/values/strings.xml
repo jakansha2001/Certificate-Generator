@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">AutoGenerateCertificates</string>
     <string name="certigen">CertiGen</string>
-    <string name="tag_certigen">Generating thousands of certificaates in few seconds</string>
+    <string name="tag_certigen">Generating thousands of certificates in just one click</string>
+    <string name="upload_string">Upload an excel file</string>
+    <string name="browse_from_device">Browse from Device</string>
+    <string name="upload_from_drive">Upload from Drive</string>
 </resources>
