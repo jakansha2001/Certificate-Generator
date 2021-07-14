@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">AutoGenerateCertificates</string>
     <string name="certigen">CertiGen</string>
-    <string name="tag_certigen">Generating thousands of certificaates in few seconds</string>
+    <string name="tag_certigen">Generating thousands of certificates in just one click</string>
+    <string name="upload_textView">Open a File</string>
+    <string name="browse">BROWSE</string>
+    <string name="sheets_cntnt_dscptn">sheets file icon</string>
 </resources>
