@@ -1,72 +1,24 @@
 package com.example.autogeneratecertificates;
 
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
 @SuppressWarnings("deprecation")
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     Button browse;
-    TextView pathText;
-    String path_xlsx;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        browse= (Button)findViewById(R.id.browseButton);
-        pathText= (TextView)findViewById(R.id.pathText);
-        browse.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                checkPermission();
-                browse.setText("GO TO TEMPLATES");
-                browse.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent i1=new Intent(getApplicationContext(), TemplateActivity.class);
-                        i1.putExtra("file path",path_xlsx);
-                        Log.i("path",path_xlsx);
-                        startActivity(i1);
-                    }
-                });
-            }
-        });
-    }
-    private void checkPermission() {
-        if(Build.VERSION.SDK_INT>=23){
-            if(checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
-                requestPermissions(new String[]{ Manifest.permission.WRITE_EXTERNAL_STORAGE},1);
-            }
-            else{
-                getPath();
-            }
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if(requestCode==1){
-            if(grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                getPath();
-                Toast.makeText(this, "Permission granted", Toast.LENGTH_SHORT).show();
-            }else{
-                Toast.makeText(this, "Permission not granted", Toast.LENGTH_SHORT).show();
-            }
-        }
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        browse = (Button) findViewById(R.id.browseButton);
+        browse.setOnClickListener(this);
     }
 
     protected void getPath() {
@@ -81,11 +33,18 @@ public class MainActivity extends AppCompatActivity {
         switch (requestCode) {
             case 1:
                 if (resultCode == RESULT_OK) {
-                    path_xlsx = data.getData().getPath();
-                    path_xlsx=path_xlsx.replace("/document/raw:/", "");
-                    Toast.makeText(this, path_xlsx, Toast.LENGTH_LONG).show();
+                    String path_xlsx = data.getData().toString();
+                    Intent i1 = new Intent(getApplicationContext(), TemplateActivity.class);
+                    i1.putExtra("file path", path_xlsx);
+                    browse.setText(R.string.browse);
+                    startActivity(i1);
                 }
                 break;
         }
+    }
+
+    @Override
+    public void onClick(View v) {
+        getPath();
     }
 }
