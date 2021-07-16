@@ -1,13 +1,19 @@
 package com.example.autogeneratecertificates;
 
+import android.content.res.AssetManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xslf.usermodel.XMLSlideShow;
+import org.apache.poi.xslf.usermodel.XSLFShape;
+import org.apache.poi.xslf.usermodel.XSLFSlide;
+import org.apache.poi.xslf.usermodel.XSLFTextBox;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -15,6 +21,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
+import java.util.List;
 
 public class TemplateActivity extends AppCompatActivity {
 
@@ -25,7 +32,7 @@ public class TemplateActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_template);
         test = (TextView) findViewById(R.id.test);
-        showData();
+        searchSlideAsync();
     }
 
     public void showData() {
@@ -58,5 +65,29 @@ public class TemplateActivity extends AppCompatActivity {
             }
         }).start();
 
+    }
+
+    private void searchSlideAsync() {
+        new Thread(this::searchSlide).start();
+    }
+
+    private void searchSlide() {
+        try {
+            AssetManager assManager = getAssets();
+            InputStream is = assManager.open("templates.pptx");
+            XMLSlideShow ppt = new XMLSlideShow(is);
+            XSLFSlide slide = ppt.getSlides().get(0);
+            List<XSLFShape> shapes = slide.getShapes();
+            for (XSLFShape shape : shapes) {
+                if (shape instanceof XSLFTextBox) {
+                    String text = ((XSLFTextBox) shape).getText();
+                    String newText = text.replace("<Name>", "Saurabh");
+                    ((XSLFTextBox) shape).setText(newText);
+                }
+            }
+            Log.d("TemplateActivity", "shapes " + shapes.size());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
