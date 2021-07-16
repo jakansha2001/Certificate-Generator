@@ -1,83 +1,62 @@
 package com.example.autogeneratecertificates;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatActivity;
-import android.content.Intent;
-import android.util.Log;
+import android.net.Uri;
+import android.os.Bundle;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import java.io.File;
-import java.io.FileInputStream;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Iterator;
-
-import android.os.Bundle;
 
 public class TemplateActivity extends AppCompatActivity {
 
     TextView test;
-    String path_xlsx;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_template);
+        test = (TextView) findViewById(R.id.test);
+        showData();
+    }
 
-        test=(TextView)findViewById(R.id.test);
-        Intent i2=getIntent();
-        path_xlsx=i2.getStringExtra("file path");
-        //Toast.makeText(this, path_xlsx, Toast.LENGTH_LONG).show();
+    public void showData() {
+        new Thread(() -> {
+            try {
+                String path_xlsx = getIntent().getStringExtra("file path");
+                InputStream inputfile = getContentResolver().openInputStream(Uri.parse(path_xlsx));
 
-        try {
-            FileInputStream inputfile = new FileInputStream(new File(path_xlsx));
-
-            /*XSSFWorkbook workbook = new XSSFWorkbook(inputfile);
-            XSSFSheet sheet = workbook.getSheetAt(0);
-            Iterator < Row > rowIterator = sheet.iterator();
-            int count=0;
-            while (rowIterator.hasNext()) {
-                count++;
-            }
-            String[] Name=new String[count];
-            String[] Course=new String[count];
-            String[] College=new String[count];
-            String[] Society=new String[count];
-            String[] Position=new String[count];
-            count=0;
-
-            while (rowIterator.hasNext()) {
-                Row row = rowIterator.next();
-
-                Iterator < Cell > cellIterator = row.cellIterator();
-                while (cellIterator.hasNext()) {
-                    Cell cellname = cellIterator.next();
-                    Name[count]=cellname.toString();
-                    Cell cellcourse = cellIterator.next();
-                    Course[count]=cellcourse.toString();
-                    Cell cellcollege = cellIterator.next();
-                    College[count]=cellcollege.toString();
-                    Cell cellsociety = cellIterator.next();
-                    Society[count]=cellsociety.toString();
-                    Cell cellposition = cellIterator.next();
-                    Position[count]=cellposition.toString();
+                XSSFWorkbook workbook = new XSSFWorkbook(inputfile);
+                XSSFSheet sheet = workbook.getSheetAt(0);
+                Iterator<Row> rowIterator = sheet.iterator();
+                int count = 0;
+                while (rowIterator.hasNext() && count < 10) {
                     count++;
+                    Row row = rowIterator.next();
+                    Iterator<Cell> c = row.cellIterator();
+                    c.next();
+                    test.post(() -> test.setText(c.next().getStringCellValue()));
+                    Thread.sleep(1000);
                 }
+                inputfile.close();
+            } catch (FileNotFoundException e) {
+                test.setText("FilenotFound");
+                e.printStackTrace();
+            } catch (IOException e) {
+                test.setText("IOException");
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-            test.setText(College[3]);*/
-            inputfile.close();
-        }
-        catch (FileNotFoundException e) {
-            test.setText("FilenotFound");
-            e.printStackTrace();
-        } catch (IOException e) {
-            test.setText("IOException");
-            e.printStackTrace();
-        }
+        }).start();
 
     }
 }
